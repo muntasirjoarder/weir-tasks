@@ -1,0 +1,4 @@
+-- Task 2 : calculates the monthly average of the number of measurements emitted by each sensor per day 
+  select aa.SensorId,aa.YY,aa.MM, Avg([Value]) AverageMessagesPerDay from (
+	select YEAR(CreatedAt) YY, MONTH(CreatedAt) MM, CreatedAt, SensorId, [Value] from DeviceMeasurements
+) aa group by aa.YY,aa.MM, aa.SensorId;

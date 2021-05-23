@@ -1,0 +1,24 @@
+-- Task 1 : total time each device in the table has been operating for in seconds with grouping by device (total by device)
+   select zz.DeviceId, sum(TotalInSeconds) TotalInSeconds from
+
+  (select 
+	aa.RowNumber, 
+	aa.DeviceId DeviceId, 
+	((bb.EpochTimestamp - aa.EpochTimestamp) / 1000) TotalInSeconds
+  
+  from 
+  (select 
+  ROW_NUMBER() OVER(ORDER BY DeviceId,EpochTimestamp ASC) AS RowNumber,
+  [EventID],DeviceId, EventType, EpochTimestamp
+  from [DeviceEvents] WHERE EventType='Starting') aa
+
+  inner join 
+    (
+	select 
+  ROW_NUMBER() OVER(ORDER BY DeviceId,EpochTimestamp ASC) AS RowNumber,
+  [EventID],DeviceId, EventType, EpochTimestamp
+  from [DeviceEvents] WHERE EventType='Stopping') bb
+
+  on aa.RowNumber = bb.RowNumber
+  ) zz group by zz.DeviceId;
+  
